@@ -1,0 +1,60 @@
+========================================================================
+           PRICEWATCH - DOCUMENTAZIONE TECNICA E GUIDA ALL'AVVIO
+========================================================================
+
+1. DESCRIZIONE GENERALE
+   PriceWatch è una piattaforma di intelligence per l'e-commerce che monitora
+   le variazioni di prezzo di prodotti target in tempo reale.
+
+2. ARCHITETTURA TECNICA
+   L'app è costruita con uno stack full-stack moderno:
+   - FRONTEND: React 18 + Vite per una velocità fulminea.
+   - STYLING: Tailwind CSS per un'interfaccia "Cyber-Technical" lucida.
+   - BACKEND: Express.js (Node.js) che gestisce le API e gli agenti di scansione.
+   - DATABASE: SQLite. Utilizziamo un database locale relazionale per salvare:
+     * Elenco dei prodotti monitorati.
+     * Storico completo dei prezzi (per i grafici).
+     * Log delle notifiche e degli avvisi di calo prezzo.
+   - AUTENTICAZIONE: Firebase Auth (Google Login) per proteggere i dati.
+
+3. FUNZIONAMENTO DELLO SCRAPER (IL CUORE)
+   Il sistema di recupero prezzi utilizza un approccio "ibrido":
+   - Metodo Standard: Utilizza Axios e Cheerio per scaricare e analizzare HTML statico.
+   - Metodo Avanzato: Per siti complessi (come Amazon, eBay, MediaWorld), l'app
+     avvia un browser invisibile (Playwright / Chromium). Questo permette di:
+     * Bypassare i sistemi anti-bot.
+     * Eseguire il JavaScript della pagina per caricare il prezzo reale.
+     * Estrarre i dati anche quando sono nascosti dietro caricamenti asincroni.
+
+4. COME AVVIARE L'APPLICAZIONE DA GITHUB
+   Se hai scaricato o clonato il codice da GitHub, segui questi passaggi:
+
+   A) REQUISITI
+      - Node.js (versione 18 o superiore installata).
+      - Un account Firebase (per le chiavi di autenticazione).
+
+   B) INSTALLAZIONE
+      Apri il terminale nella cartella del progetto e digita:
+      > npm install
+
+   C) CONFIGURAZIONE AMBIENTE
+      Crea un file chiamato `.env` nella root e inserisci le tue chiavi Firebase:
+      VITE_FIREBASE_API_KEY=tuo_valore
+      VITE_FIREBASE_AUTH_DOMAIN=tuo_valore
+      VITE_FIREBASE_PROJECT_ID=tuo_valore
+      ...etc (copia i valori dal tuo pannello Firebase).
+
+   D) INSTALLAZIONE BROWSER (CRUCIALE PER LO SCRAPER)
+      L'app ha bisogno di Chromium per funzionare:
+      > npx playwright install chromium
+
+   E) AVVIO IN SVILUPPO
+      Per far partire il monitor e l'interfaccia:
+      > npm run dev
+
+   F) ACCESSO
+      Apri http://localhost:3000 sul tuo browser e accedi con il tuo account Google.
+
+========================================================================
+                 Sviluppato per Hackathon Rising Youth 2026
+========================================================================

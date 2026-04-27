@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 0. Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Helpers ---
+    function isSignedIn() { return request.auth != null; }
+    function isOwner(data) { return isSignedIn() && data.ownerId == request.auth.uid; }
+    function isValidId(id) { return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidProduct(data) {
+      return data.keys().hasAll(['name', 'url', 'ownerId']) &&
+             data.keys().size() >= 3 &&
+             data.name is string && data.name.size() <= 200 &&
+             data.url is string && data.url.size() <= 2000 &&
+             data.ownerId == request.auth.uid;
+    }
+
+    function isValidAlert(data) {
+      return data.keys().hasAll(['entityId', 'entityName', 'oldPrice', 'newPrice', 'percentageChange', 'timestamp', 'ownerId']) &&
+             data.entityId is string &&
+             data.ownerId == request.auth.uid;
+    }
+
+    // --- Collections ---
+
+    match /products/{productId} {
+      allow read: if isOwner(existing());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidProduct(incoming()) && isValidId(productId);
+      allow update: if isOwner(existing()) && isValidProduct(incoming()) && 
+                    incoming().ownerId == existing().ownerId;
+      allow delete: if isOwner(existing());
+    }
+
+    match /competitors/{competitorId} {
+      allow read: if isOwner(existing());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && incoming().ownerId == request.auth.uid && isValidId(competitorId);
+      allow update: if isOwner(existing()) && incoming().ownerId == existing().ownerId;
+      allow delete: if isOwner(existing());
+    }
+
+    match /price_history/{historyId} {
+      allow read: if isOwner(existing());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && incoming().ownerId == request.auth.uid && isValidId(historyId);
+    }
+
+    match /alerts/{alertId} {
+      allow read: if isOwner(existing());
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isSignedIn() && isValidAlert(incoming()) && isValidId(alertId);
+      allow delete: if isOwner(existing());
+    }
+  }
+}

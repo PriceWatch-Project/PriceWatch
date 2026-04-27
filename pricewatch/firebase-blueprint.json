@@ -1,0 +1,77 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "A product being monitored by the user.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "currentPrice": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["name", "url", "ownerId"]
+    },
+    "Competitor": {
+      "title": "Competitor",
+      "description": "A competitor's product URL linked to a main product.",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "currentPrice": { "type": "number" },
+        "lastUpdated": { "type": "string", "format": "date-time" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["productId", "name", "url", "ownerId"]
+    },
+    "PriceHistory": {
+      "title": "PriceHistory",
+      "description": "Historical record of price data points.",
+      "type": "object",
+      "properties": {
+        "entityId": { "type": "string" },
+        "entityType": { "type": "string", "enum": ["product", "competitor"] },
+        "price": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["entityId", "entityType", "price", "timestamp", "ownerId"]
+    },
+    "Alert": {
+      "title": "Alert",
+      "description": "Price drop notification record.",
+      "type": "object",
+      "properties": {
+        "entityId": { "type": "string" },
+        "entityName": { "type": "string" },
+        "oldPrice": { "type": "number" },
+        "newPrice": { "type": "number" },
+        "percentageChange": { "type": "number" },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "ownerId": { "type": "string" }
+      },
+      "required": ["entityId", "entityName", "oldPrice", "newPrice", "percentageChange", "timestamp", "ownerId"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "User products"
+    },
+    "/competitors/{competitorId}": {
+      "schema": "Competitor",
+      "description": "Competitor links"
+    },
+    "/price_history/{historyId}": {
+      "schema": "PriceHistory",
+      "description": "Price logs"
+    },
+    "/alerts/{alertId}": {
+      "schema": "Alert",
+      "description": "Alert logs"
+    }
+  }
+}

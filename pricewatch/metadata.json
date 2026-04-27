@@ -1,0 +1,6 @@
+{
+  "name": "PriceWatch",
+  "description": "Competitive intelligence platform for e-commerce price monitoring and alerts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["Real-time alerts", "E-commerce scraping", "Price history tracking"]
+}
